@@ -32,7 +32,13 @@ module Rack::Brotli
 
     def call(env)
       status, headers, body = @app.call(env)
-      headers = Rack::Headers.new(headers)
+      rack_headers = Rack::Headers.new
+
+      headers.each do |key, value|
+        rack_headers[key] = value
+      end
+
+      headers = rack_headers
 
       unless should_deflate?(env, status, headers, body)
         return [status, headers, body]
